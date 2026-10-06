@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
 
@@ -20,6 +21,9 @@ function Home() {
   const completedTopics = JSON.parse(
     localStorage.getItem("completedTopics") || "[]"
   );
+
+  const [subjectQuery, setSubjectQuery] = useState("");
+  const [searchedSubject, setSearchedSubject] = useState("");
 
   const subjects = [
     {
@@ -54,11 +58,38 @@ function Home() {
     },
   ];
 
+  const filteredSubjects = subjects.filter((subject) => {
+    const query = searchedSubject.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    return (
+      subject.name.toLowerCase().includes(query) ||
+      subject.description.toLowerCase().includes(query)
+    );
+  });
+
   const getStarted = (subject) => {
-    localStorage.setItem("selectedSubject", subject);
+    localStorage.setItem(
+      "selectedSubject",
+      subject
+    );
+
     localStorage.removeItem("selectedTopic");
 
     navigate("/topics");
+  };
+
+  const handleSubjectSearch = () => {
+    setSearchedSubject(subjectQuery);
+  };
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSubjectSearch();
+    }
   };
 
   return (
@@ -79,8 +110,8 @@ function Home() {
             </h1>
 
             <p>
-              Choose a subject, explore topics, and test your
-              knowledge with personalized quizzes.
+              Search for a subject, explore important topics,
+              and test your knowledge with personalized quizzes.
             </p>
           </div>
 
@@ -95,7 +126,6 @@ function Home() {
         {/* Continue Learning */}
         {selectedSubject && selectedTopic && (
           <div className="dashboard-box">
-
             <p className="page-label">
               CONTINUE LEARNING
             </p>
@@ -114,13 +144,11 @@ function Home() {
             >
               Continue Quiz
             </button>
-
           </div>
         )}
 
         {/* Quick Stats */}
         <div className="progress-section">
-
           <h2>
             Your Learning Overview
           </h2>
@@ -186,50 +214,92 @@ function Home() {
           </div>
         </div>
 
-        {/* Subject Section */}
+        {/* Subject Search + Subject Section */}
         <div className="progress-section">
 
           <h2>
-            Choose a Subject
+            Select a Subject
           </h2>
 
           <p>
-            Select a subject to explore its topics and start
-            learning.
+            Search for a subject or choose one from the available subjects.
           </p>
 
-          <div className="dashboard-container">
+          <div className="subject-input-box">
 
-            {subjects.map((subject) => (
-              <div
-                className="dashboard-card"
-                key={subject.name}
-              >
+            <input
+              type="text"
+              placeholder="Search subject e.g. DBMS, Python, Machine Learning..."
+              value={subjectQuery}
+              onChange={(event) =>
+                setSubjectQuery(event.target.value)
+              }
+              onKeyDown={handleSearchKeyDown}
+            />
 
-                <span>
-                  SUBJECT
-                </span>
-
-                <h3>
-                  {subject.name}
-                </h3>
-
-                <p>
-                  {subject.description}
-                </p>
-
-                <button
-                  onClick={() =>
-                    getStarted(subject.name)
-                  }
-                >
-                  Explore Topics
-                </button>
-
-              </div>
-            ))}
+            <button
+              type="button"
+              onClick={handleSubjectSearch}
+            >
+              Search
+            </button>
 
           </div>
+
+          <p className="suggestion-text">
+            Try: DBMS • Python • Data Structures • Operating Systems • Computer Networks • Machine Learning
+          </p>
+
+          {filteredSubjects.length > 0 ? (
+            <div className="dashboard-container">
+
+              {filteredSubjects.map((subject) => (
+                <div
+                  className="dashboard-card"
+                  key={subject.name}
+                >
+
+                  <span>
+                    SUBJECT
+                  </span>
+
+                  <h3>
+                    {subject.name}
+                  </h3>
+
+                  <p>
+                    {subject.description}
+                  </p>
+
+                  <button
+                    onClick={() =>
+                      getStarted(subject.name)
+                    }
+                  >
+                    Explore Topics
+                  </button>
+
+                </div>
+              ))}
+
+            </div>
+          ) : (
+            <div className="dashboard-box">
+              <p className="page-label">
+                NO MATCH FOUND
+              </p>
+
+              <h2>
+                Subject not available yet
+              </h2>
+
+              <p>
+                Try searching for DBMS, Python, Data Structures,
+                Operating Systems, Computer Networks, or Machine Learning.
+              </p>
+            </div>
+          )}
+
         </div>
 
         {/* Learning Tip */}
