@@ -1,42 +1,24 @@
-import {
-  Navigate,
-  Route,
-  Routes,
-} from "react-router";
-
+import { Navigate, Route, Routes } from "react-router";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Topics from "./pages/Topics";
 import Quiz from "./pages/Quiz";
 import Result from "./pages/Result";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-
+import UploadMaterial from "./pages/UploadMaterial";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      {/* Default */}
-      <Route
-        path="/"
-        element={<Navigate to="/login" replace />}
-      />
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* Public Routes */}
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-      <Route
-        path="/register"
-        element={<Register />}
-      />
-
-      {/* Protected Routes */}
       <Route
         path="/dashboard"
         element={
@@ -91,11 +73,16 @@ function App() {
         }
       />
 
-      {/* 404 */}
       <Route
-        path="*"
-        element={<NotFound />}
+        path="/upload-material"
+        element={
+          <ProtectedRoute>
+            <UploadMaterial />
+          </ProtectedRoute>
+        }
       />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

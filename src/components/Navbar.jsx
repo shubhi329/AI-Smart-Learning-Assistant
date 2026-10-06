@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import "../theme.css";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -41,6 +40,7 @@ function Navbar() {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/home">Learn</Link>
         <Link to="/topics">Topics</Link>
+        <Link to="/upload-material">Upload</Link>
         <Link to="/profile">Profile</Link>
 
         <button
