@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import "../theme.css";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -46,7 +47,11 @@ function Navbar() {
           className="theme-toggle"
           onClick={toggleTheme}
           aria-label="Toggle theme"
-          title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          title={
+            isDarkMode
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+          }
         >
           {isDarkMode ? "☀️" : "🌙"}
         </button>
