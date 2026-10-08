@@ -25,8 +25,7 @@ function Result() {
       ? Math.round((score / totalQuestions) * 100)
       : 0;
 
-  const incorrectAnswers =
-    totalQuestions - score;
+  const incorrectAnswers = totalQuestions - score;
 
   let message =
     "Keep practicing to improve your score.";
@@ -34,8 +33,7 @@ function Result() {
   if (percentage === 100) {
     message = "Excellent! Perfect score. 🎉";
   } else if (percentage >= 67) {
-    message =
-      "Great performance! Keep improving.";
+    message = "Great performance! Keep improving.";
   } else {
     message =
       "Good effort! Review the answers below and keep practicing.";
@@ -88,19 +86,16 @@ function Result() {
         <div className="result-summary">
           <div className="summary-card">
             <span>Correct Answers</span>
-
             <strong>{score}</strong>
           </div>
 
           <div className="summary-card">
             <span>Incorrect Answers</span>
-
             <strong>{incorrectAnswers}</strong>
           </div>
 
           <div className="summary-card">
             <span>Total Questions</span>
-
             <strong>{totalQuestions}</strong>
           </div>
         </div>
@@ -124,40 +119,37 @@ function Result() {
                     marginTop: "20px",
                   }}
                 >
-                  {/* Question Number */}
                   <p
                     style={{
                       marginBottom: "12px",
                       fontWeight: "800",
-                      color: "#111827",
+                      color: "var(--text)",
                       letterSpacing: "0.2px",
                     }}
                   >
                     Question {index + 1}
                   </p>
 
-                  {/* Question */}
                   <p
                     style={{
                       marginBottom: "15px",
                       fontWeight: "750",
-                      color: "#111827",
+                      color: "var(--text)",
                       lineHeight: "1.6",
                     }}
                   >
                     {item.question}
                   </p>
 
-                  {/* Your Answer */}
                   <p
                     style={{
                       marginBottom: "8px",
-                      color: "#111827",
+                      color: "var(--text)",
                     }}
                   >
                     <strong
                       style={{
-                        color: "#111827",
+                        color: "var(--text)",
                         fontWeight: "800",
                       }}
                     >
@@ -166,16 +158,15 @@ function Result() {
                     {item.options[item.selectedAnswer]}
                   </p>
 
-                  {/* Correct Answer */}
                   <p
                     style={{
                       marginBottom: "8px",
-                      color: "#111827",
+                      color: "var(--text)",
                     }}
                   >
                     <strong
                       style={{
-                        color: "#111827",
+                        color: "var(--text)",
                         fontWeight: "800",
                       }}
                     >
@@ -184,19 +175,18 @@ function Result() {
                     {item.options[item.correctAnswer]}
                   </p>
 
-                  {/* Status */}
                   <p
                     style={{
                       marginBottom: "12px",
                       fontWeight: "800",
-                      color: "#111827",
+                      color: "var(--text)",
                     }}
                   >
                     <span
                       style={{
                         color: isCorrect
-                          ? "#16a34a"
-                          : "#dc2626",
+                          ? "var(--success)"
+                          : "var(--danger)",
                         fontWeight: "900",
                         marginRight: "5px",
                       }}
@@ -209,16 +199,15 @@ function Result() {
                       : "Incorrect"}
                   </p>
 
-                  {/* Explanation */}
                   <p
                     style={{
-                      color: "#111827",
+                      color: "var(--text)",
                       lineHeight: "1.7",
                     }}
                   >
                     <strong
                       style={{
-                        color: "#111827",
+                        color: "var(--text)",
                         fontWeight: "800",
                       }}
                     >

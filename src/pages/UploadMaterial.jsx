@@ -1,20 +1,18 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
 import "./UploadMaterial.css";
 
 function UploadMaterial() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const allowedExtensions = [".pdf", ".ppt", ".pptx", ".txt"];
-  const maxFileSize = 10 * 1024 * 1024;
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
 
-  const handleFile = (file) => {
     setError("");
     setMessage("");
 
@@ -22,163 +20,141 @@ function UploadMaterial() {
       return;
     }
 
-    const fileName = file.name.toLowerCase();
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "text/plain",
+    ];
 
-    const hasValidExtension = allowedExtensions.some((extension) =>
-      fileName.endsWith(extension)
-    );
+    const fileExtension = file.name
+      .split(".")
+      .pop()
+      .toLowerCase();
 
-    if (!hasValidExtension) {
-      setSelectedFile(null);
-      setError("Please upload a PDF, PPT, PPTX, or TXT file.");
+    const allowedExtensions = ["pdf", "ppt", "pptx", "txt"];
+
+    if (
+      !allowedTypes.includes(file.type) &&
+      !allowedExtensions.includes(fileExtension)
+    ) {
+      setError(
+        "Please upload a PDF, PowerPoint, or text file."
+      );
       return;
     }
 
-    if (file.size > maxFileSize) {
-      setSelectedFile(null);
-      setError("File size must be 10 MB or less.");
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File size must be less than 10 MB.");
       return;
     }
 
     setSelectedFile(file);
   };
 
-  const handleInputChange = (event) => {
-    const file = event.target.files?.[0];
-    handleFile(file);
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files?.[0];
-    handleFile(file);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  const handleChooseFile = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handlePrepareMaterial = () => {
-    if (!selectedFile) {
-      setError("Please select a study material file first.");
-      return;
-    }
-
-    setError("");
-    setMessage(
-      "Material selected successfully. PDF/PPT parsing will be connected through the backend next."
-    );
-  };
-
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) {
-      return `${bytes} B`;
-    }
-
-    if (bytes < 1024 * 1024) {
-      return `${(bytes / 1024).toFixed(1)} KB`;
-    }
-
-    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  };
-
-  const removeFile = () => {
+  const handleRemoveFile = () => {
     setSelectedFile(null);
     setError("");
     setMessage("");
+  };
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+  const handleGenerateQuiz = () => {
+    if (!selectedFile) {
+      setError("Please choose a study file first.");
+      return;
     }
+
+    localStorage.setItem(
+      "uploadedMaterialName",
+      selectedFile.name
+    );
+
+    setMessage(
+      "Your material has been selected. Direct quiz generation from the uploaded material will be connected to the backend."
+    );
   };
 
   return (
     <div>
       <Navbar />
 
-      <main className="dashboard-page upload-material-page">
-        <div className="dashboard-header upload-material-header">
-          <div>
-            <p className="page-label">STUDY MATERIAL</p>
+      <main className="page-container upload-material-page">
+        <section className="upload-material-header">
+          <p className="page-label">STUDY MATERIAL</p>
 
-            <h1>Upload Study Material</h1>
+          <h1>Upload Your Study Material</h1>
 
-            <p>
-              Upload your PDF, PowerPoint, or notes and prepare them
-              for your personalized learning experience.
-            </p>
-          </div>
+          <p>
+            Upload your PDF, PowerPoint, or notes.
+            Your quiz will be generated directly from
+            the uploaded study material.
+          </p>
+        </section>
 
-          <button
-            className="start-learning-btn"
-            onClick={() => navigate("/home")}
-          >
-            Back to Learning
-          </button>
-        </div>
-
-        <div className="dashboard-box upload-material-card">
+        <section className="dashboard-box upload-material-card">
           <div className="upload-material-intro">
-            <div className="upload-material-icon">📚</div>
+            <div className="upload-material-icon">
+              📚
+            </div>
 
-            <h2>Upload your material</h2>
+            <h2>Choose Your Study Material</h2>
 
             <p>
-              Choose a study file from your device. The actual parsing,
-              text extraction, summaries, and quiz generation will be
-              connected through the backend.
+              Upload your learning material and get ready
+              to test your knowledge with a quiz.
             </p>
           </div>
 
-          <div
-            className="upload-drop-zone"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-          >
-            <div className="upload-drop-icon">↑</div>
+          <div className="upload-drop-zone">
+            <div className="upload-drop-icon">
+              ↑
+            </div>
 
-            <h3>Drag and drop your file here</h3>
+            <h3>Upload your file</h3>
 
-            <p>or choose a file from your device</p>
+            <p>
+              Select a PDF, PowerPoint, or text file from
+              your device.
+            </p>
 
             <p className="upload-supported-text">
-              PDF, PPT, PPTX, TXT • Maximum 10 MB
+              Supported formats: PDF, PPT, PPTX, TXT ·
+              Maximum size: 10 MB
             </p>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.ppt,.pptx,.txt,application/pdf"
-              onChange={handleInputChange}
-              hidden
-            />
-
-            <button
-              type="button"
-              className="upload-choose-btn"
-              onClick={handleChooseFile}
-            >
+            <label className="upload-choose-btn">
               Choose File
-            </button>
+
+              <input
+                type="file"
+                accept=".pdf,.ppt,.pptx,.txt"
+                onChange={handleFileChange}
+                hidden
+              />
+            </label>
           </div>
 
           {selectedFile && (
             <div className="upload-selected-file">
-              <div className="upload-file-icon">📄</div>
+              <div className="upload-file-icon">
+                📄
+              </div>
 
               <div className="upload-file-details">
                 <strong>{selectedFile.name}</strong>
-                <span>{formatFileSize(selectedFile.size)}</span>
+
+                <span>
+                  {(selectedFile.size / 1024 / 1024).toFixed(
+                    2
+                  )}{" "}
+                  MB
+                </span>
               </div>
 
               <button
                 type="button"
                 className="upload-remove-btn"
-                onClick={removeFile}
+                onClick={handleRemoveFile}
               >
                 Remove
               </button>
@@ -201,48 +177,42 @@ function UploadMaterial() {
             <button
               type="button"
               className="upload-primary-btn"
-              onClick={handlePrepareMaterial}
+              onClick={handleGenerateQuiz}
             >
-              Prepare Material
+              Generate Quiz
             </button>
           </div>
-        </div>
+        </section>
 
-        <div className="progress-section upload-steps-section">
-          <h2>How it will work</h2>
-
-          <div className="dashboard-container upload-steps-grid">
-            <div className="dashboard-card upload-step-card">
-              <span>STEP 01</span>
-
+        <section className="upload-steps-section">
+          <div className="upload-steps-grid">
+            <div className="dashboard-box upload-step-card">
+              <p className="page-label">STEP 01</p>
               <h3>Upload</h3>
-
               <p>
-                Select your PDF, PowerPoint, or notes file.
+                Upload your study material.
               </p>
             </div>
 
-            <div className="dashboard-card upload-step-card">
-              <span>STEP 02</span>
-
-              <h3>Parse</h3>
-
+            <div className="dashboard-box upload-step-card">
+              <p className="page-label">STEP 02</p>
+              <h3>Read Material</h3>
               <p>
-                The backend will extract useful content from your file.
+                The complete material will be used to
+                create your quiz.
               </p>
             </div>
 
-            <div className="dashboard-card upload-step-card">
-              <span>STEP 03</span>
-
-              <h3>Learn</h3>
-
+            <div className="dashboard-box upload-step-card">
+              <p className="page-label">STEP 03</p>
+              <h3>Take Quiz</h3>
               <p>
-                Use the extracted content for summaries, topics, and quizzes.
+                Test your understanding with questions
+                from your material.
               </p>
             </div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );
